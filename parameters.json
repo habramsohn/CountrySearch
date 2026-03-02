@@ -1,0 +1,15 @@
+{
+    "WebSearcher":
+    {
+        "countries": ["France"],
+        "themes": ["Economics", "Finance"],
+        "webSearchRelevanceTarget": "economic and financial news, especially sources containing information on Chinese investments, grants, or loans.",
+        "requiredWords": ["Eurozone"],
+        "avoidWords": [""]
+    },
+    "SourceChecker":
+    {
+        "URLRelevanceTarget": "etc",
+        "URLSearchTerms": ["etc"]
+    }
+}
