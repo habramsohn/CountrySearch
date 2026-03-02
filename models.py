@@ -46,7 +46,8 @@ class WebSearcher():
                       themes, 
                       webSearchRelevanceTarget, 
                       avoidWords, 
-                      requiredWords):
+                      requiredWords,
+                      limit):
         """
         Leverage WebSearcher context to generate a list of URLs and base domain names for all themes related to all countries in a list.
         
@@ -59,18 +60,22 @@ class WebSearcher():
         requiredWords: If sources not containing certain words should be filtered out from the results, put the words here. 
         """
         for country in countries:
+            # Build first prompt
             contextPrompt = self.contextPromptBuild(country, webSearchRelevanceTarget, avoidWords, requiredWords)
             contextResponse = self.client.models.generate_content(
                 model='gemini-3-flash-preview',
                 contents=contextPrompt
             ).text
+            # Split into individual links and domain names and add to object list
             contextURLs = [temp.split('&') for temp in contextResponse.split(',')]
             self.webSources.extend(contextURLs)
+            # Extend search for each theme
             for theme in themes:
-                rep = True
-                tempCheck = 0
+                check = 0
                 themeURLs = []
-                while rep and tempCheck < 5:
+                # Parameter for how exhaustive search should be
+                while check < limit:
+                    print(check, theme)
                     themePrompt = self.themePromptBuild(theme, country, themeURLs)
                     themeResponse = self.client.models.generate_content(
                         model='gemini-3-flash-preview',
@@ -79,17 +84,11 @@ class WebSearcher():
                     if "Done." in themeResponse:
                         break
                     URLs = [temp.split('&') for temp in themeResponse.split(',')]
-                    URLnum = len(URLs)
-                    repCount = 0
                     for URL in URLs:
                         if URL not in self.webSources:
                             self.webSources.append(URL)
                             themeURLs.append(URL)
-                        else:
-                            repCount += 1
-                    tempCheck += 1
-                    if repCount == URLnum:
-                        rep = False
+                    check += 1
         self.client.close()
                 
 class SourceChecker():
