@@ -1,16 +1,16 @@
 {
     "WebSearcher":
     {
-        "countries": ["France"],
-        "themes": ["Economics", "Finance"],
-        "webSearchRelevanceTarget": "economic and financial news, especially sources containing information on Chinese investments, grants, or loans.",
-        "requiredWords": ["Eurozone"],
+        "countries": ["Japan"],
+        "themes": ["Nature"],
+        "webSearchRelevanceTarget": "News related to Japanese parks, national parks, or other nature-related policy.",
+        "requiredWords": [""],
         "avoidWords": [""],
-        "limit": 3
+        "limit": 1
     },
     "SourceChecker":
     {
-        "URLRelevanceTarget": "etc",
-        "URLSearchTerms": ["etc"]
+        "URLRelevanceTargets": ["Renewable energy initiatives"],
+        "URLSearchTerms": ["Renewable energy", "solar power", "wind power", "Green energy"]
     }
 }
