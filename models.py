@@ -1,4 +1,8 @@
 from google import genai
+import asyncio
+
+# Using asyncio will require separating theme function from country function (which we should do anyway) - maybe both can be concurrent?
+# Model calls will also need to be adjusted to use async versions (maybe)
 
 class WebSearcher(): 
     
@@ -16,11 +20,15 @@ class WebSearcher():
             
             For {country}:
             
-            Give me the most important and reliable sources in {country} focusing on {webSearchRelevanceTarget}.
+            Give me the most important and reliable sources in {country} focusing on {webSearchRelevanceTarget}. Give me base URLs. 
             
-            I am not looking for {avoidWords}. I am only interested in identifying specific transactions. Only include sources containing at least one of the following categories:
+            IMPORTANT: Do not give me URLs with content beyond the '.com', '.gov', or equivalent top-level domain.
+            
+            I am not looking for {avoidWords}. Only include sources containing at least one of the following categories:
 
             {requiredWords}
+            
+            Translate source name to English.
             
             Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
             
@@ -33,7 +41,7 @@ class WebSearcher():
                          country, 
                          themeURLs):
         themePrompt = f"""
-            Give me more sources related to {theme} in {country}. 
+            Give me more sources related to {theme} specific to {country}. 
             
             Do not include any of these sources: 
             
@@ -41,11 +49,42 @@ class WebSearcher():
             
             IMPORTANT: If all found sources are in the above list, return this string with no extra formatting, spaces, or other tokens: "Done."
             
+            Translate source name to English.
+            
             Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
             
             URL1&source_name,URL2&source_name2, ...
             """
         return themePrompt
+    
+    async def themeSearch(self,
+                    theme, 
+                    country,
+                    limit):
+            check = 0
+            themeURLs = []
+            # limit = Parameter for how exhaustive search should be; set in parameters.json
+            while check < limit:
+                print(check, theme)
+                themePrompt = self.themePromptBuild(theme, country, themeURLs)
+                themeResponse = (await self.client.aio.models.generate_content(
+                    model='gemini-3-flash-preview',
+                    contents=themePrompt
+                )).text
+                
+                # Allow model to end theme if no further information exists
+                if "Done." in themeResponse:
+                    break
+                
+                URLs = [temp.split('&') for temp in themeResponse.split(',')]
+                
+                # Add URL to global context if not existing 
+                # Add URL to theme comtext to prevent repitition with minimal token spend
+                for URL in URLs:
+                    if URL not in self.webSources:
+                        self.webSources.append(URL)
+                        themeURLs.append(URL)
+                check += 1
         
     def countrySearch(self, 
                       countries, 
@@ -79,31 +118,10 @@ class WebSearcher():
             self.webSources.extend(contextURLs)
             
             # Extend search for each theme
-            for theme in themes:
-                check = 0
-                themeURLs = []
-                # limit = Parameter for how exhaustive search should be; set in parameters.json
-                while check < limit:
-                    print(check, theme)
-                    themePrompt = self.themePromptBuild(theme, country, themeURLs)
-                    themeResponse = self.client.models.generate_content(
-                        model='gemini-3-flash-preview',
-                        contents=themePrompt
-                    ).text
-                    
-                    # Allow model to end theme if no further information exists
-                    if "Done." in themeResponse:
-                        break
-                    
-                    URLs = [temp.split('&') for temp in themeResponse.split(',')]
-                    
-                    # Add URL to global context if not existing 
-                    # Add URL to theme comtext to prevent repitition with minimal token spend
-                    for URL in URLs:
-                        if URL not in self.webSources:
-                            self.webSources.append(URL)
-                            themeURLs.append(URL)
-                    check += 1
+            tasks = [self.themeSearch(theme, country, limit) for theme in themes]
+            async def gather_tasks():
+                return await asyncio.gather(*tasks)
+            asyncio.run(gather_tasks())            
         self.client.close()
                 
 class SourceChecker():
@@ -111,6 +129,7 @@ class SourceChecker():
     def __init__(self, api_key):
         self.client = genai.Client(api_key=api_key)
         self.output = []
+        self.semaphore = asyncio.Semaphore(40)
         
     @staticmethod
     def sourcePromptBuild(source,
@@ -139,35 +158,40 @@ class SourceChecker():
 
             Be sure to run your searches in all official and otherwise relevant languages of the host nation.
 
-            Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind:
+            Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
+            To assign a num to a source, you MUST have a concrete example of relevance - mistakes will get you fired:
             
-            num|reasoning
+            num|domain_name|reasoning
         
             Possible num:
             
             -1 = Unable to access source or execute search
             0 = No relevance
             1 = Possible or indirect relevance to topics or search terms
-            2 = Relevance to multiple topics and search terms
+            2 = Relevance to all topics and search terms
             """
         return sourcePrompt
         
+    async def sourceAwait(self,
+                    source,
+                    URLRelevanceTargets,
+                    URLSearchTerms):
+        async with self.semaphore:
+            print(source)
+            sourcePrompt = self.sourcePromptBuild(source, URLRelevanceTargets, URLSearchTerms)
+            sourceResponse = (await self.client.aio.models.generate_content(
+                        model='gemini-3-flash-preview',
+                        contents=sourcePrompt
+                        )).text
+            rating = tuple(sourceResponse.split('|'))
+            self.output.append((rating))
+
     def sourceCheck(self,
                     sources,
                     URLRelevanceTargets,
                     URLSearchTerms):
-        for source in sources:
-            print(source)
-            sourcePrompt = self.sourcePromptBuild(source, URLRelevanceTargets, URLSearchTerms)
-            sourceResponse = self.client.models.generate_content(
-                        model='gemini-3-flash-preview',
-                        contents=sourcePrompt
-                    ).text
-            print(sourceResponse)
-            rating = tuple(sourceResponse.split('|'))
-            print(rating)
-            self.output.append((rating))
+        tasks = [self.sourceAwait(source,URLRelevanceTargets,URLSearchTerms) for source in sources]
+        async def gather_tasks(): 
+            return await asyncio.gather(*tasks)
+        asyncio.run(gather_tasks())
         self.client.close()
-
-        
-    
