@@ -161,7 +161,7 @@ class SourceChecker():
             Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
             To assign a num to a source, you MUST have a concrete example of relevance - mistakes will get you fired:
             
-            num|domain_name|reasoning
+            num|reasoning
         
             Possible num:
             
