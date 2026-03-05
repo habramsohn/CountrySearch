@@ -32,7 +32,7 @@ class WebSearcher():
             
             Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
             
-            URL1&source_name1,URL2&source_name2, ...
+            first_URL,second_URL, ...
             """
         return contextPrompt
     
@@ -53,7 +53,7 @@ class WebSearcher():
             
             Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
             
-            URL1&source_name,URL2&source_name2, ...
+            first_URL,second_URL, ...
             """
         return themePrompt
     
@@ -76,10 +76,10 @@ class WebSearcher():
                 if "Done." in themeResponse:
                     break
                 
-                URLs = [temp.split('&') for temp in themeResponse.split(',')]
+                URLs = themeResponse.split(",")
                 
                 # Add URL to global context if not existing 
-                # Add URL to theme comtext to prevent repitition with minimal token spend
+                # Add URL to theme context to prevent repitition with minimal token spend
                 for URL in URLs:
                     if URL not in self.webSources:
                         self.webSources.append(URL)
@@ -114,7 +114,7 @@ class WebSearcher():
             ).text
             
             # Split into individual links and domain names and add to object list
-            contextURLs = [temp.split('&') for temp in contextResponse.split(',')]
+            contextURLs = contextResponse.split(',')
             self.webSources.extend(contextURLs)
             
             # Extend search for each theme
@@ -161,7 +161,7 @@ class SourceChecker():
             Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
             To assign a num to a source, you MUST have a concrete example of relevance - mistakes will get you fired:
             
-            num|reasoning
+            link|domain_name|num|reasoning
         
             Possible num:
             

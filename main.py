@@ -23,11 +23,11 @@ if __name__ == "__main__":
     sourcechecker = SourceChecker(SOURCECHECKER_KEY)
     
     websearch.countrySearch(**WebSearcherParameters)
-    sources, domains = linkParser(websearch.webSources)
+    sources = websearch.webSources
     
     sourcechecker.sourceCheck(sources, 
                               **SourceCheckerParameters)
-    ratings, reasonings = linkParser(sourcechecker.output)
+    links, domains, ratings, reasonings = linkParser(sourcechecker.output)
     
-    df = frameBuilder(sources, domains, ratings, reasonings)
+    df = frameBuilder(links, domains, ratings, reasonings)
     exportCsv(df, countries)

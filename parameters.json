@@ -2,13 +2,11 @@
     "WebSearcher":
     {
         "countries": ["Iceland"],
-        "themes": ["Chinese SOEs and subsidiaries", "Chinese-owned country-incorporated corporations", "Regional, provincial, or municipal government websites", 
-                    "Government ministries", "Government/Chinese funded innovation platforms", "Universities", "Chambers of commerce and business associations",
-                    "Mainstream, regional, and investigative media"],
+        "themes": ["Chinese SOEs and subsidiaries"],
         "webSearchRelevanceTarget": "sources containing information on official or state-owned Chinese investments, grants, or loans in 2024.",
         "requiredWords": ["Specific transactions"],
         "avoidWords": ["international journals", "sources from outside the country", ""],
-        "limit": 2
+        "limit": 1
     },
     "SourceChecker":
     {
