@@ -8,9 +8,9 @@ from utils import *
 load_dotenv()
 
 # Load parameters
-with open('parameters.json', 'r') as file:
+with open("parameters.json", "r") as file:
     parameters = json.load(file)
-    
+
 WebSearcherParameters = parameters["WebSearcher"]
 countries = "_".join(WebSearcherParameters["countries"])
 SourceCheckerParameters = parameters["SourceChecker"]
@@ -21,13 +21,12 @@ SOURCECHECKER_KEY = os.getenv("SOURCECHECKER_KEY")
 if __name__ == "__main__":
     websearch = WebSearcher(WEBSEARCHER_KEY)
     sourcechecker = SourceChecker(SOURCECHECKER_KEY)
-    
+
     websearch.countrySearch(**WebSearcherParameters)
     sources = websearch.webSources
-    
-    sourcechecker.sourceCheck(sources, 
-                              **SourceCheckerParameters)
+
+    sourcechecker.sourceCheck(sources, **SourceCheckerParameters)
     links, domains, ratings, reasonings = linkParser(sourcechecker.output)
-    
+
     df = frameBuilder(links, domains, ratings, reasonings)
     exportCsv(df, countries)

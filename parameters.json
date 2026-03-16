@@ -1,16 +1,54 @@
 {
-    "WebSearcher":
-    {
-        "countries": ["Iceland"],
-        "themes": ["Chinese SOEs and subsidiaries"],
+    "WebSearcher": {
+        "countries": [
+            "Bahrain"
+        ],
+        "themes": [
+            "Chinese SOEs and subsidiaries",
+            "Chinese-owned country-incorporated corporations",
+            "Regional, provincial, or municipal government websites",
+            "Government ministries",
+            "Government/Chinese funded innovation platforms",
+            "Universities",
+            "Chambers of commerce and business associations",
+            "Mainstream, regional, and investigative media",
+            "Legal firms who have worked on deals related to Chinese SOEs"
+        ],
         "webSearchRelevanceTarget": "sources containing information on official or state-owned Chinese investments, grants, or loans in 2024.",
-        "requiredWords": ["Specific transactions"],
-        "avoidWords": ["international journals", "sources from outside the country", ""],
-        "limit": 1
+        "requiredWords": [
+            "Specific transactions"
+        ],
+        "avoidWords": [
+            "international journals",
+            "sources from outside the country",
+            ""
+        ],
+        "limit": 2
     },
-    "SourceChecker":
-    {
-        "URLRelevanceTargets": ["Chinese investments", "Chinese loans", "Transactions or interactions involving Chinese state-owned: corporations, banks, or government agencies", "Academic grants or technical assistance from Chinese state-owned: corporations, banks, or government agencies", "Other official assistance from Chinese state-owned or governmental entities"],
-        "URLSearchTerms": ["Silk Road fund","sovereign guarantee","concessional","China", "Chinese", "Loan", "Investment", "Belt and Road", "Credit", "Financing", "Partnership", "bilateral program", "bilateral programme", "Sino", "joint funding"]
+    "SourceChecker": {
+        "URLRelevanceTargets": [
+            "Chinese investments",
+            "Chinese loans",
+            "Transactions or interactions involving Chinese state-owned: corporations, banks, or government agencies",
+            "Academic grants or technical assistance from Chinese state-owned: corporations, banks, or government agencies",
+            "Other official assistance from Chinese state-owned or governmental entities"
+        ],
+        "URLSearchTerms": [
+            "Silk Road fund",
+            "sovereign guarantee",
+            "concessional",
+            "China",
+            "Chinese",
+            "Loan",
+            "Investment",
+            "Belt and Road",
+            "Credit",
+            "Financing",
+            "Partnership",
+            "bilateral program",
+            "bilateral programme",
+            "Sino",
+            "joint funding"
+        ]
     }
 }
