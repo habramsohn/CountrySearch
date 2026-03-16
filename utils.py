@@ -16,5 +16,5 @@ def frameBuilder(sources, domains, ratings, reasonings):
     return df
 
 
-def exportCsv(df, countries):
-    df.to_excel(f"Results/{countries}_output.xlsx", index=False)
+def exportCsv(df, country):
+    df.to_excel(f"Results/{country}_output.xlsx", index=False)

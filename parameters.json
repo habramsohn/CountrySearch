@@ -21,7 +21,7 @@
             "sources from outside the country",
             ""
         ],
-        "limit": 2
+        "limit": 1
     },
     "SourceChecker": {
         "URLRelevanceTargets": [

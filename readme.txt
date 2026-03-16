@@ -1,8 +1,10 @@
 # CountrySearch
 
-A tool for gathering multiple web sources related to a specific country by leveraging AI API calls.
+A tool for gathering multiple web sources related to any topic in any specific country by leveraging AI API calls.
 
 This tool is built for Gemini, but other AI APIs could be inserted by adjusting the prompt functions in models.py.
+
+Note that because this tool produces AI output, manually reviewing the results is recommended. However, this tool should improve variety and efficiency of source searching.
 
 ## Setup
 
@@ -36,7 +38,7 @@ The tool uses `parameters.json` to configure searches:
 - `webSearchRelevanceTarget`: Description of what information to look for
 - `requiredWords`: Words that must appear in relevant sources
 - `avoidWords`: Words to avoid in search results
-- `limit`: How many search iterations per theme 
+- `limit`: How many search iterations per theme, generally returning 15 sources per limit per theme
 
 Note: In my experience, a limit of 2 tends to give the most efficient results. A lower limit may miss essential results, and higher limits return more hallucinations or irrelevant sources, requiring more manual work. The optimal number may vary depending on the target. 
 
