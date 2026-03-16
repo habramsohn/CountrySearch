@@ -12,7 +12,6 @@ with open("parameters.json", "r") as file:
     parameters = json.load(file)
 
 WebSearcherParameters = parameters["WebSearcher"]
-countries = "_".join(WebSearcherParameters["countries"])
 SourceCheckerParameters = parameters["SourceChecker"]
 
 WEBSEARCHER_KEY = os.getenv("WEBSEARCHER_KEY")
@@ -27,6 +26,8 @@ if __name__ == "__main__":
 
     sourcechecker.sourceCheck(sources, **SourceCheckerParameters)
     links, domains, ratings, reasonings = linkParser(sourcechecker.output)
+    country = WebSearcherParameters["country"]
+
 
     df = frameBuilder(links, domains, ratings, reasonings)
-    exportCsv(df, countries)
+    exportCsv(df, country)

@@ -80,7 +80,7 @@ class WebSearcher:
 
     def countrySearch(
         self,
-        countries,
+        country,
         themes,
         webSearchRelevanceTarget,
         avoidWords,
@@ -88,7 +88,7 @@ class WebSearcher:
         limit,
     ):
         """
-        Leverage WebSearcher context to generate a list of URLs and base domain names for all themes related to all countries in a list.
+        Leverage WebSearcher context to generate a list of URLs and base domain names for all themes related to specified country.
 
         Parameters should be set in parameters.json or passed in some other way.
 
@@ -98,27 +98,25 @@ class WebSearcher:
 
         requiredWords: If sources not containing certain words should be filtered out from the results, put the words here.
         """
-        for country in countries:
+        # Build first prompt
+        contextPrompt = self.contextPromptBuild(
+            country, webSearchRelevanceTarget, avoidWords, requiredWords
+        )
+        contextResponse = self.client.models.generate_content(
+            model="gemini-3-flash-preview", contents=contextPrompt
+        ).text
 
-            # Build first prompt
-            contextPrompt = self.contextPromptBuild(
-                country, webSearchRelevanceTarget, avoidWords, requiredWords
-            )
-            contextResponse = self.client.models.generate_content(
-                model="gemini-3-flash-preview", contents=contextPrompt
-            ).text
+        # Split into individual links and domain names and add to object list
+        contextURLs = contextResponse.split(",")
+        self.webSources.extend(contextURLs)
 
-            # Split into individual links and domain names and add to object list
-            contextURLs = contextResponse.split(",")
-            self.webSources.extend(contextURLs)
+        # Extend search for each theme
+        tasks = [self.themeSearch(theme, country, limit) for theme in themes]
 
-            # Extend search for each theme
-            tasks = [self.themeSearch(theme, country, limit) for theme in themes]
+        async def gather_tasks():
+            return await asyncio.gather(*tasks)
 
-            async def gather_tasks():
-                return await asyncio.gather(*tasks)
-
-            asyncio.run(gather_tasks())
+        asyncio.run(gather_tasks())
         self.client.close()
 
 

@@ -1,8 +1,6 @@
 {
     "WebSearcher": {
-        "countries": [
-            "Bahrain"
-        ],
+        "country": "Bahrain",
         "themes": [
             "Chinese SOEs and subsidiaries",
             "Chinese-owned country-incorporated corporations",
