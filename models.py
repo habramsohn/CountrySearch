@@ -71,7 +71,7 @@ class WebSearcher:
             URLs = themeResponse.split(",")
 
             # Add URL to global context if not existing
-            # Add URL to theme context to prevent repitition with minimal token spend
+            # Add URL to theme context to prevent repetition with minimal token spend
             for URL in URLs:
                 if URL not in self.webSources:
                     self.webSources.append(URL)
@@ -150,21 +150,20 @@ class SourceChecker:
 
             In addition to external search, always use the website’s internal search function with the above terms, including translations, to capture deep URLs.
 
-            Be sure to run your searches in all official and otherwise relevant languages of the host nation.
+            Be sure to run your searches in all official and otherwise relevant languages of the host nation. Be highly discerning.
 
             Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
             Website title is the normal name: e.g. 'New York Times' - translated to English and transliterated to English characters. 
             To assign a num to a source, you MUST have a specific, concrete example of relevance - mistakes will get you fired:
             
-            link|website_title|num|specific example
+            link|website_title|num|specific_example
         
             Possible num:
             
             -1 = Unable to access source or execute search, or the domain is a specific article/post
             0 = No relevance
-            1 = Indirect relevance to topics or search terms
-            2 = Direct relevance to topics and search terms
-            3 = Specific examples of relevance to topics and search terms
+            1 = Specific example of relevance to topics and search terms
+            2 = Extreme relevance to topics
             """
         return sourcePrompt
 

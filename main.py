@@ -26,8 +26,9 @@ if __name__ == "__main__":
 
     sourcechecker.sourceCheck(sources, **SourceCheckerParameters)
     links, domains, ratings, reasonings = linkParser(sourcechecker.output)
+    adjs = linkCutter(links)
     country = WebSearcherParameters["country"]
 
-
-    df = frameBuilder(links, domains, ratings, reasonings)
+    df = frameBuilder(adjs, domains, ratings, reasonings)
+    
     exportCsv(df, country)
