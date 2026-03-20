@@ -22,12 +22,12 @@ if __name__ == "__main__":
     sourcechecker = SourceChecker(SOURCECHECKER_KEY)
 
     websearch.countrySearch(**WebSearcherParameters)
+    country = WebSearcherParameters["country"]
     sources = websearch.webSources
 
-    sourcechecker.sourceCheck(sources, **SourceCheckerParameters)
+    sourcechecker.sourceCheck(sources, country, **SourceCheckerParameters)
     links, domains, ratings, reasonings = linkParser(sourcechecker.output)
     adjs = linkCutter(links)
-    country = WebSearcherParameters["country"]
 
     df = frameBuilder(adjs, domains, ratings, reasonings)
     

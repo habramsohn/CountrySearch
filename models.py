@@ -103,7 +103,7 @@ class WebSearcher:
             country, webSearchRelevanceTarget, avoidWords, requiredWords
         )
         contextResponse = self.client.models.generate_content(
-            model="gemini-3-flash-preview", contents=contextPrompt
+            model="gemini-2.5-flash-lite", contents=contextPrompt
         ).text
 
         # Split into individual links and domain names and add to object list
@@ -128,7 +128,7 @@ class SourceChecker:
         self.semaphore = asyncio.Semaphore(40)
 
     @staticmethod
-    def sourcePromptBuild(source, URLRelevanceTargets, URLSearchTerms):
+    def sourcePromptBuild(source, country, URLRelevanceTargets, URLSearchTerms):
         sourcePrompt = f"""
             You are an expert open-source research assistant.
 
@@ -137,6 +137,8 @@ class SourceChecker:
             Run a comprehensive search across the URL's subdomains and sitemap, for evidence of the following topics:
 
             {URLRelevanceTargets}
+            
+            The source should be relevant to the above topics in {country}, specifically..
 
             Your stopping rules:
 
@@ -167,23 +169,23 @@ class SourceChecker:
             """
         return sourcePrompt
 
-    async def sourceAwait(self, source, URLRelevanceTargets, URLSearchTerms):
+    async def sourceAwait(self, source, country, URLRelevanceTargets, URLSearchTerms):
         async with self.semaphore:
             print(source)
             sourcePrompt = self.sourcePromptBuild(
-                source, URLRelevanceTargets, URLSearchTerms
+                source, country, URLRelevanceTargets, URLSearchTerms
             )
             sourceResponse = (
                 await self.client.aio.models.generate_content(
-                    model="gemini-3-flash-preview", contents=sourcePrompt
+                    model="gemini-2.5-flash-lite", contents=sourcePrompt
                 )
             ).text
             rating = tuple(sourceResponse.split("|"))
             self.output.append((rating))
 
-    def sourceCheck(self, sources, URLRelevanceTargets, URLSearchTerms):
+    def sourceCheck(self, sources, country, URLRelevanceTargets, URLSearchTerms):
         tasks = [
-            self.sourceAwait(source, URLRelevanceTargets, URLSearchTerms)
+            self.sourceAwait(source, country, URLRelevanceTargets, URLSearchTerms)
             for source in sources
         ]
 
