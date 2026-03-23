@@ -64,7 +64,7 @@ class WebSearcher:
             themePrompt = self.themePromptBuild(theme, country, themeURLs)
             themeResponse = (
                 await self.client.aio.models.generate_content(
-                    model="gemini-2.5-flash-lite", contents=themePrompt
+                    model="gemini-3.1-flash-lite-preview", contents=themePrompt
                 )
             ).text
 
@@ -107,7 +107,7 @@ class WebSearcher:
             country, webSearchRelevanceTarget, avoidWords, requiredWords
         )
         contextResponse = self.client.models.generate_content(
-            model="gemini-2.5-flash-lite", contents=contextPrompt
+            model="gemini-3.1-flash-lite-preview", contents=contextPrompt
         ).text
 
         # Split into individual links and domain names and add to object list
@@ -162,7 +162,7 @@ class SourceChecker:
             Website title is the normal name: e.g. 'New York Times' - translated to English and transliterated to English characters. 
             To assign a num to a source, you MUST have a specific, concrete example of relevance - mistakes will get you fired:
             
-            link|website_title|num|specific_example
+            website_url|website_title|num|specific_example
         
             Possible num:
             
@@ -182,9 +182,10 @@ class SourceChecker:
                 )
                 sourceResponse = (
                     await self.client.aio.models.generate_content(
-                        model="gemini-3-flash-preview", contents=sourcePrompt
+                        model="gemini-3.1-flash-lite-preview", contents=sourcePrompt
                     )
                 ).text
+                print(sourceResponse)
                 rating = tuple(sourceResponse.split("|"))
                 self.output.append((rating))
             except Exception as e:
