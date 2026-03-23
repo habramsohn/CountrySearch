@@ -158,18 +158,18 @@ class SourceChecker:
 
             Be sure to run your searches in all official and otherwise relevant languages of the host nation. Be highly discerning.
 
-            Your output should only contain the following structure: one number chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
+            Your output should only contain the following structure: one rating chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
             Website title is the normal name: e.g. 'New York Times' - translated to English and transliterated to English characters. 
-            To assign a num to a source, you MUST have a specific, concrete example of relevance - mistakes will get you fired:
+            To assign a rating to a source, you MUST have a specific, concrete example of relevance - mistakes will get you fired:
             
-            website_url|website_title|num|specific_example
+            website_url|website_title|rating|specific_example
         
-            Possible num:
+            Possible ratings:
             
             -1 = Unable to access source or execute search, or the domain is a specific article/post
             0 = No relevance
-            1 = Specific example of relevance to topics and search terms
-            2 = Extreme relevance to topics
+            1 = Identified some relevance to topics
+            2 = Specific example of relevance to topics
             """
         return sourcePrompt
 
