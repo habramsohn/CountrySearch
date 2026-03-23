@@ -27,7 +27,9 @@ class WebSearcher:
             
             Translate source name to English.
             
-            Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
+            Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources.
+            
+            Give me only the URL, no domain or other non-URL names:
             
             first_URL,second_URL, ...
             """
@@ -45,7 +47,9 @@ class WebSearcher:
             
             Translate source name to English. Mistakes will get you fired.
             
-            Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources:
+            Your output should be structured in the following way, with absolutely no extra formatting, spaces, or other tokens, for all found sources.
+            
+            Give me only the URL, no domain or other non-URL names:
             
             first_URL,second_URL, ...
             """
@@ -60,7 +64,7 @@ class WebSearcher:
             themePrompt = self.themePromptBuild(theme, country, themeURLs)
             themeResponse = (
                 await self.client.aio.models.generate_content(
-                    model="gemini-3-flash-preview", contents=themePrompt
+                    model="gemini-2.5-flash-lite", contents=themePrompt
                 )
             ).text
 
@@ -171,17 +175,20 @@ class SourceChecker:
 
     async def sourceAwait(self, source, country, URLRelevanceTargets, URLSearchTerms):
         async with self.semaphore:
-            print(source)
-            sourcePrompt = self.sourcePromptBuild(
-                source, country, URLRelevanceTargets, URLSearchTerms
-            )
-            sourceResponse = (
-                await self.client.aio.models.generate_content(
-                    model="gemini-2.5-flash-lite", contents=sourcePrompt
+            try:
+                print(source)
+                sourcePrompt = self.sourcePromptBuild(
+                    source, country, URLRelevanceTargets, URLSearchTerms
                 )
-            ).text
-            rating = tuple(sourceResponse.split("|"))
-            self.output.append((rating))
+                sourceResponse = (
+                    await self.client.aio.models.generate_content(
+                        model="gemini-3-flash-preview", contents=sourcePrompt
+                    )
+                ).text
+                rating = tuple(sourceResponse.split("|"))
+                self.output.append((rating))
+            except Exception as e:
+                print(f"Error checking {source}: {e}")
 
     def sourceCheck(self, sources, country, URLRelevanceTargets, URLSearchTerms):
         tasks = [

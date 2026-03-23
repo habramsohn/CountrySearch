@@ -2,10 +2,10 @@ import pandas as pd
 
 
 def linkParser(list):
-    elOne = [element[0] for element in list if len(element) > 1]
-    elTwo = [element[1] for element in list if len(element) > 1]
-    elThree = [element[2] for element in list if len(element) > 1]
-    elFour = [element[3] for element in list if len(element) > 1]
+    elOne = [element[0] for element in list if len(element) >= 4]
+    elTwo = [element[1] for element in list if len(element) >= 4]
+    elThree = [element[2] for element in list if len(element) >= 4]
+    elFour = [element[3] for element in list if len(element) >= 4]
     return elOne, elTwo, elThree, elFour
 
 
