@@ -178,21 +178,24 @@ class SourceChecker:
 
     async def sourceAwait(self, source, country, URLRelevanceTargets, URLSearchTerms):
         async with self.semaphore:
-            try:
-                print(source)
-                sourcePrompt = self.sourcePromptBuild(
-                    source, country, URLRelevanceTargets, URLSearchTerms
-                )
-                sourceResponse = (
-                    await self.client.aio.models.generate_content(
-                        model="gemini-3.1-flash-lite-preview", contents=sourcePrompt
+            loop = True
+            while loop == True: 
+                try:
+                    print(source)
+                    sourcePrompt = self.sourcePromptBuild(
+                        source, country, URLRelevanceTargets, URLSearchTerms
                     )
-                ).text
-                print(sourceResponse)
-                rating = tuple(sourceResponse.split("|"))
-                self.output.append((rating))
-            except Exception as e:
-                print(f"Error checking {source}: {e}")
+                    sourceResponse = (
+                        await self.client.aio.models.generate_content(
+                            model="gemini-3.1-flash-lite-preview", contents=sourcePrompt
+                        )
+                    ).text
+                    print(sourceResponse)
+                    rating = tuple(sourceResponse.split("|"))
+                    self.output.append((rating))
+                    loop = False
+                except Exception as e:
+                    print(f"Error checking {source}: {e}")
 
     def sourceCheck(self, sources, country, URLRelevanceTargets, URLSearchTerms):
         tasks = [
