@@ -1,6 +1,6 @@
 {
     "WebSearcher": {
-        "country": "Singapore",
+        "country": "Ireland",
         "themes": [
             "Chinese SOEs and subsidiaries",
             "Chinese-owned corporations incorporated in the target country",
@@ -22,7 +22,7 @@
             "sources from outside the country",
             ""
         ],
-        "limit": 3
+        "limit": 2
     },
     "SourceChecker": {
         "URLRelevanceTargets": [

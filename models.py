@@ -60,27 +60,30 @@ class WebSearcher:
         themeURLs = []
         # limit = Parameter for how exhaustive search should be; set in parameters.json
         while check < limit:
-            print(check, theme)
-            themePrompt = self.themePromptBuild(theme, country, themeURLs)
-            themeResponse = (
-                await self.client.aio.models.generate_content(
-                    model="gemini-3.1-flash-lite-preview", contents=themePrompt
-                )
-            ).text
+            try:   
+                print(check, theme)
+                themePrompt = self.themePromptBuild(theme, country, themeURLs)
+                themeResponse = (
+                    await self.client.aio.models.generate_content(
+                        model="gemini-3.1-flash-lite-preview", contents=themePrompt
+                    )
+                ).text
 
-            # Allow model to end theme if no further information exists
-            if "Done." in themeResponse:
-                break
+                # Allow model to end theme if no further information exists
+                if "Done." in themeResponse:
+                    break
 
-            URLs = themeResponse.split(",")
+                URLs = themeResponse.split(",")
 
-            # Add URL to global context if not existing
-            # Add URL to theme context to prevent repetition with minimal token spend
-            for URL in URLs:
-                if URL not in self.webSources:
-                    self.webSources.append(URL)
-                    themeURLs.append(URL)
-            check += 1
+                # Add URL to global context if not existing
+                # Add URL to theme context to prevent repetition with minimal token spend
+                for URL in URLs:
+                    if URL not in self.webSources:
+                        self.webSources.append(URL)
+                        themeURLs.append(URL)
+                check += 1
+            except Exception as e: 
+                print(f"Failure: {e}")
 
     def countrySearch(
         self,
