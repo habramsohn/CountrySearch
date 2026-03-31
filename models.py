@@ -1,4 +1,5 @@
 from google import genai
+from google.genai import types
 import asyncio
 
 
@@ -65,7 +66,9 @@ class WebSearcher:
                 themePrompt = self.themePromptBuild(theme, country, themeURLs)
                 themeResponse = (
                     await self.client.aio.models.generate_content(
-                        model="gemini-3.1-flash-lite-preview", contents=themePrompt
+                        model="gemini-3.1-flash-lite-preview", contents=themePrompt,
+                        config=types.GenerateContentConfig(
+                            temperature=1.5)
                     )
                 ).text
 
@@ -110,7 +113,9 @@ class WebSearcher:
             country, webSearchRelevanceTarget, avoidWords, requiredWords
         )
         contextResponse = self.client.models.generate_content(
-            model="gemini-3.1-flash-lite-preview", contents=contextPrompt
+            model="gemini-3.1-flash-lite-preview", contents=contextPrompt,
+            config=types.GenerateContentConfig(
+                            temperature=1.5)
         ).text
 
         # Split into individual links and domain names and add to object list
@@ -145,7 +150,7 @@ class SourceChecker:
 
             {URLRelevanceTargets}
             
-            The source should be relevant to the above topics in {country}, specifically..
+            The source should be relevant to the above topics in {country}, specifically.
 
             Your stopping rules:
 
@@ -159,11 +164,17 @@ class SourceChecker:
 
             In addition to external search, always use the website’s internal search function with the above terms, including translations, to capture deep URLs.
 
-            Be sure to run your searches in all official and otherwise relevant languages of the host nation. Be highly discerning.
+            Be sure to run your searches in all official and otherwise relevant languages of the host nation. 
 
             Your output should only contain the following structure: one rating chosen from the list below, and a single sentence of your reasoning, with no additional formatting or tokens of any kind.
+            The rating system is a scale - It's easier for you to assign a 1 than to assign a 2 to a source.
             Website title is the normal name: e.g. 'New York Times' - translated to English and transliterated to English characters. 
-            To assign a rating to a source, you MUST have a specific, concrete example of relevance - mistakes will get you fired:
+            
+            To assign a rating of 1 to a source, you must have some suspicion that the source contains relevant information.
+            
+            It is worse to miss potential information than to get a false positive. 
+            
+            To assign a rating of 2 to a source, you MUST have a specific, concrete example of relevance:
             
             website_url|website_title|rating|specific_example
         
@@ -171,7 +182,7 @@ class SourceChecker:
             
             -1 = Unable to access source or execute search, or the domain is a specific article/post
             0 = No relevance
-            1 = Identified some relevance to topics
+            1 = Identified potential relevance to topics
             2 = Specific example of relevance to topics
             """
         return sourcePrompt
@@ -187,7 +198,9 @@ class SourceChecker:
                     )
                     sourceResponse = (
                         await self.client.aio.models.generate_content(
-                            model="gemini-3.1-flash-lite-preview", contents=sourcePrompt
+                            model="gemini-3.1-flash-lite-preview", contents=sourcePrompt,
+                            config=types.GenerateContentConfig(
+                            temperature=2)
                         )
                     ).text
                     print(sourceResponse)

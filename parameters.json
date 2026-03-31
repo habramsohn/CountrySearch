@@ -1,6 +1,6 @@
 {
     "WebSearcher": {
-        "country": "United Arab Emirates",
+        "country": "Great Britain",
         "themes": [
             "Chinese SOEs and subsidiaries",
             "Chinese-owned corporations incorporated in the target country",
@@ -22,18 +22,22 @@
             "sources from outside the country",
             ""
         ],
-        "limit": 2
+        "limit": 4
     },
     "SourceChecker": {
         "URLRelevanceTargets": [
             "Transactions or interactions involving Chinese state-owned: corporations, banks, or government agencies",
             "Academic grants or technical assistance from Chinese state-owned: corporations, banks, or government agencies",
-            "Other official assistance from Chinese state-owned or governmental entities"
+            "Other official assistance from Chinese state-owned or governmental entities",
+            "Investments, donations, or other activities from Chinese state-owned entities in the recipient country"
         ],
         "URLSearchTerms": [
             "Silk Road fund",
             "sovereign guarantee",
-            "Belt and Road"
+            "Belt and Road",
+            "Chinese investment",
+            "Chinese loan",
+            "Chinese state-owned"
         ]
     }
 }
